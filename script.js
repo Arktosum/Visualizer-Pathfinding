@@ -206,3 +206,101 @@ async function Astar(){
     }
 
 }
+
+
+function Maze(){
+    recursiveDivisionMaze(0,M-1,0,N-1,'horizontal',false)
+}
+
+
+function recursiveDivisionMaze(rowStart, rowEnd, colStart, colEnd, orientation, surroundingWalls) {
+    if (rowEnd < rowStart || colEnd < colStart) {
+      return;
+    }
+    if (!surroundingWalls) {
+        // Add surrounding Walls
+        for(let i = 0 ; i < M;i++){
+            for(let j = 0 ; j < N;j++){
+                if(i==0 || j == 0|| i == M-1 || j == N-1){
+                    // set this to a wall
+                    my_grid.grid[i][j].element.classList.add('wall')
+                    my_grid.grid[i][j].isWall = true
+                }
+            }
+        }
+    };
+    surroundingWalls = true;
+    
+    if (orientation === "horizontal") {
+      let possibleRows = [];
+      for (let number = rowStart; number <= rowEnd; number += 2) {
+        possibleRows.push(number);
+      }
+      let possibleCols = [];
+      for (let number = colStart - 1; number <= colEnd + 1; number += 2) {
+        possibleCols.push(number);
+      }
+      let randomRowIndex = Math.floor(Math.random() * possibleRows.length);
+      let randomColIndex = Math.floor(Math.random() * possibleCols.length);
+      let currentRow = possibleRows[randomRowIndex];
+      let colRandom = possibleCols[randomColIndex];
+      for(let r = 0 ; r < M;r++){
+        for(let c = 0 ; c < N;c++){
+            if (r === currentRow && c !== colRandom && c >= colStart - 1 && c <= colEnd + 1) {
+                let type = my_grid.grid[r][c].element.className
+                if(type !== 'cell startNode' && type !== 'cell endNode'){
+                my_grid.grid[r][c].element.classList.add('wall')
+                my_grid.grid[r][c].isWall = true
+            }
+            }
+        }
+    }
+      if (currentRow - 2 - rowStart > colEnd - colStart) {
+        recursiveDivisionMaze(rowStart, currentRow - 2, colStart, colEnd, orientation, surroundingWalls);
+      } else {
+        recursiveDivisionMaze(rowStart, currentRow - 2, colStart, colEnd, "vertical", surroundingWalls);
+      }
+      if (rowEnd - (currentRow + 2) > colEnd - colStart) {
+        recursiveDivisionMaze(currentRow + 2, rowEnd, colStart, colEnd, orientation, surroundingWalls);
+      } else {
+        recursiveDivisionMaze(currentRow + 2, rowEnd, colStart, colEnd, "vertical", surroundingWalls);
+      }
+    } 
+    else {
+      let possibleCols = [];
+      for (let number = colStart; number <= colEnd; number += 2) {
+        possibleCols.push(number);
+      }
+      let possibleRows = [];
+      for (let number = rowStart - 1; number <= rowEnd + 1; number += 2) {
+        possibleRows.push(number);
+      }
+      let randomColIndex = Math.floor(Math.random() * possibleCols.length);
+      let randomRowIndex = Math.floor(Math.random() * possibleRows.length);
+      let currentCol = possibleCols[randomColIndex];
+      let rowRandom = possibleRows[randomRowIndex];
+      
+        for(let r = 0 ; r < M;r++){
+            for(let c = 0 ; c < N;c++){
+                if (c === currentCol && r !== rowRandom && r >= rowStart - 1 && r <= rowEnd + 1) {
+                    let type = my_grid.grid[r][c].element.className
+                    if(type !== 'cell startNode' && type !== 'cell endNode'){
+                        my_grid.grid[r][c].element.classList.add('wall')
+                        my_grid.grid[r][c].isWall = true
+                    }
+                    }
+                }
+            }
+      if (rowEnd - rowStart > currentCol - 2 - colStart) {
+        recursiveDivisionMaze(rowStart, rowEnd, colStart, currentCol - 2, "horizontal", surroundingWalls);
+      } else {
+        recursiveDivisionMaze(rowStart, rowEnd, colStart, currentCol - 2, orientation, surroundingWalls);
+      }
+      if (rowEnd - rowStart > colEnd - (currentCol + 2)) {
+        recursiveDivisionMaze(rowStart, rowEnd, currentCol + 2, colEnd, "horizontal", surroundingWalls);
+      } else {
+        recursiveDivisionMaze(rowStart, rowEnd, currentCol + 2, colEnd, orientation, surroundingWalls);
+      }
+    }
+  };
+  
